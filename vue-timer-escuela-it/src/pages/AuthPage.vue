@@ -1,8 +1,11 @@
 <script setup>
 import useUser from '@/composables/useUser'
 import { doLogin, doRegister } from '@/infra/api/auth'
-import { ref } from 'vue'
+import BaseInput from '@/components/BaseInput.vue'
+import { ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import { useForm } from 'vee-validate'
+import * as yup from 'yup'
 
 const registerMode = ref(false)
 const isLoading = ref(false)
@@ -10,17 +13,43 @@ const formData = ref({})
 
 const { setUser } = useUser()
 const router = useRouter()
+const { handleSubmit, setFieldError, resetForm } = useForm({
+  validationSchema: yup.object({
+    name: yup.string().required(),
+    email: yup.string().required().email(),
+    password: yup.string().required().min(6),
+  }),
+})
 
-const handleAuth = async () => {
+watch(registerMode, () => {
+  resetForm({
+    values: {
+      name: '',
+      email: '',
+      password: '',
+    },
+  })
+})
+
+const onSubmit = handleSubmit((values) => {
+  console.log(values)
+  handleAuth(values)
+})
+
+const handleAuth = async (values) => {
   try {
     isLoading.value = true
     const user = registerMode.value
-      ? await doRegister({ ...formData.value })
-      : await doLogin({ ...formData.value })
+      ? await doRegister({ ...values })
+      : await doLogin({ ...values })
     setUser(user)
     router.push('/')
   } catch (error) {
     console.error(error)
+
+    for (const key in error.response.data.errors) {
+      setFieldError(key, error.response.data.errors[key][0])
+    }
   } finally {
     isLoading.value = false
   }
@@ -29,25 +58,27 @@ const handleAuth = async () => {
 
 <template>
   <section class="flex justify-center items-center h-screen">
-    <div class="card w-96 bg-base-200 shadow-xl flex items-center p-4 gap-3">
-      <input
-        v-model="formData.name"
+    <form
+      class="card w-96 bg-base-200 shadow-xl flex items-center p-4 gap-3"
+      @submit="onSubmit"
+    >
+      <BaseInput
         v-if="registerMode"
-        type="text"
+        v-model="formData.name"
         placeholder="Nombre"
-        class="input input-bordered w-full max-w-xs"
+        name="name"
       />
-      <input
+      <BaseInput
         v-model="formData.email"
         type="email"
         placeholder="Email"
-        class="input input-bordered w-full max-w-xs"
+        name="email"
       />
-      <input
+      <BaseInput
         v-model="formData.password"
         type="password"
         placeholder="Contraseña"
-        class="input input-bordered w-full max-w-xs"
+        name="password"
       />
 
       <p v-if="!registerMode" @click="registerMode = true">
@@ -58,7 +89,7 @@ const handleAuth = async () => {
       <div>
         <button
           :disabled="isLoading"
-          @click="handleAuth"
+          type="submit"
           class="btn btn-wide btn-success"
         >
           {{ registerMode ? 'Registar' : 'Iniciar sesión' }}
@@ -68,6 +99,6 @@ const handleAuth = async () => {
           class="loading loading-spinner text-accent"
         ></span>
       </div>
-    </div>
+    </form>
   </section>
 </template>

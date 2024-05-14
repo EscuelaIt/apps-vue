@@ -9,3 +9,7 @@ export const getToken = () => {
 export const isAuthenticated = () => {
   return !!getToken()
 }
+
+export const removeToken = () => {
+  localStorage.removeItem('timer-eit-token')
+}

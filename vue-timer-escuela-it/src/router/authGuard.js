@@ -5,7 +5,7 @@ import { isAuthenticated } from '@/infra/services/authService'
 const needsToAuthenticate = (to) => to.matched.some((m) => m.meta.requiresAuth)
 
 export const authGuard = async (to) => {
-  const { setUser } = useUser()
+  const { setUser, user } = useUser()
 
   if (!isAuthenticated()) {
     if (needsToAuthenticate(to)) {
@@ -15,10 +15,14 @@ export const authGuard = async (to) => {
   }
 
   try {
-    const user = await getMe()
-    setUser(user)
+    if (user.value === undefined) {
+      const userInfo = await getMe()
+      setUser(userInfo)
+    }
   } catch (error) {
     console.error(error)
-    return '/auth'
+    if (to.path !== '/auth') {
+      return '/auth'
+    }
   }
 }
