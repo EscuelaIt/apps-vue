@@ -9,8 +9,7 @@ const { user } = useUser()
 </script>
 
 <template>
-  <BaseLayout>
-    <h1 class="bg-red-500">Hola Home!</h1>
+  <BaseLayout title="Dashboard">
     <button class="btn" @click="showBaseModal = true">Show modal</button>
     <h2>{{ user }}</h2>
     <BaseModal

@@ -8,7 +8,14 @@ import {
 import { getColorScheme, setScheme } from '@/utils/colorThemes'
 import { doLogout } from '@/infra/api/auth'
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, RouterLink } from 'vue-router'
+
+defineProps({
+  title: {
+    type: String,
+    required: true,
+  },
+})
 
 const router = useRouter()
 
@@ -36,10 +43,13 @@ const logout = async () => {
       <header class="h-11 mb-3 items-center flex justify-end p-4">
         <PlusIcon class="h-6 w-6" />
       </header>
-      <slot />
+      <section class="px-4">
+        <h1 class="text-2xl font-semibold mb-4">{{ title }}</h1>
+        <slot />
+      </section>
     </div>
     <div
-      class="drawer-side p-4 !w-80 min-h-full bg-base-200 !flex flex-col justify-between"
+      class="drawer-side p-4 !w-52 min-h-full bg-base-200 !flex flex-col justify-between"
     >
       <div>
         <label
@@ -48,10 +58,12 @@ const logout = async () => {
           class="drawer-overlay"
         ></label>
         <ul class="menu text-base-content">
-          <!-- Sidebar content here -->
-          <li><a>Dashboard</a></li>
-          <li><a>Projects</a></li>
-          <li><a>Reports</a></li>
+          <li>
+            <RouterLink to="/">Dashboard</RouterLink>
+          </li>
+          <li>
+            <RouterLink to="/projects">Projects</RouterLink>
+          </li>
         </ul>
       </div>
 

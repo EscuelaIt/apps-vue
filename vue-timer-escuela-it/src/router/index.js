@@ -13,6 +13,14 @@ const routes = [
     },
   },
   {
+    name: 'ProjectsPage',
+    path: '/projects',
+    component: () => import('@/pages/ProjectsPage.vue'),
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
     name: 'AuthPage',
     path: '/auth',
     component: AuthPage,

@@ -1,5 +1,6 @@
 <script setup>
 import useUser from '@/composables/useUser'
+import useToast from '@/composables/useToast'
 import { doLogin, doRegister } from '@/infra/api/auth'
 import BaseInput from '@/components/BaseInput.vue'
 import { ref, watch } from 'vue'
@@ -11,11 +12,12 @@ const registerMode = ref(false)
 const isLoading = ref(false)
 const formData = ref({})
 
+const { showToast } = useToast()
 const { setUser } = useUser()
 const router = useRouter()
 const { handleSubmit, setFieldError, resetForm } = useForm({
   validationSchema: yup.object({
-    name: yup.string().required(),
+    name: registerMode.value ? yup.string().required() : yup.string(),
     email: yup.string().required().email(),
     password: yup.string().required().min(6),
   }),
@@ -46,6 +48,8 @@ const handleAuth = async (values) => {
     router.push('/')
   } catch (error) {
     console.error(error)
+
+    showToast({ message: error.response.data.message, error: true })
 
     for (const key in error.response.data.errors) {
       setFieldError(key, error.response.data.errors[key][0])
