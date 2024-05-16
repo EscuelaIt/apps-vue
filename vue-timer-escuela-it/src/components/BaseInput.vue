@@ -2,6 +2,10 @@
 import { useField } from 'vee-validate'
 
 const props = defineProps({
+  modelValue: {
+    type: String,
+    default: '',
+  },
   name: {
     type: String,
     required: true,
@@ -20,7 +24,13 @@ const props = defineProps({
   },
 })
 // const model = defineModel()
-const { value: model, errorMessage, handleBlur } = useField(() => props.name)
+const {
+  value: model,
+  errorMessage,
+  handleBlur,
+} = useField(() => props.name, undefined, {
+  syncVModel: true,
+})
 const validationListeners = {
   blur: (evt) => handleBlur(evt, true),
 }

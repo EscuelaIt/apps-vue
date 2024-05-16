@@ -12,11 +12,7 @@ const { user } = useUser()
   <BaseLayout title="Dashboard">
     <button class="btn" @click="showBaseModal = true">Show modal</button>
     <h2>{{ user }}</h2>
-    <BaseModal
-      v-if="showBaseModal"
-      :is-active="showBaseModal"
-      @close="showBaseModal = false"
-    >
+    <BaseModal v-if="showBaseModal" @close="showBaseModal = false">
       <p>Contenido!!!</p>
     </BaseModal>
   </BaseLayout>

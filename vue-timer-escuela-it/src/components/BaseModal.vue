@@ -1,23 +1,20 @@
 <script setup>
 defineProps({
-  isActive: {
-    type: Boolean,
-    default: false,
-  },
   showClose: {
     type: Boolean,
     default: true,
+  },
+  title: {
+    type: String,
+    default: '',
   },
 })
 defineEmits(['close'])
 </script>
 
 <template>
-  <div
-    class="modal pointer-events-auto"
-    :class="isActive ? 'opacity-100' : 'opacity-0'"
-  >
-    <div class="modal-box">
+  <div class="modal pointer-events-auto opacity-100">
+    <div class="modal-box" :class="showClose && 'pt-11'">
       <button
         v-if="showClose"
         class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
@@ -26,7 +23,7 @@ defineEmits(['close'])
         x
       </button>
 
-      <h3 class="font-bold text-lg">Hello!</h3>
+      <h3 v-if="title" class="font-bold text-lg mb-8">{{ title }}</h3>
       <slot />
     </div>
   </div>

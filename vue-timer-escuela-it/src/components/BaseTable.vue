@@ -1,4 +1,6 @@
 <script setup>
+import { PencilIcon, TrashIcon } from '@heroicons/vue/24/solid'
+
 defineProps({
   columns: {
     type: Array,
@@ -8,7 +10,16 @@ defineProps({
     type: Array,
     default: () => [],
   },
+  hasEdition: {
+    type: Boolean,
+    default: false,
+  },
+  hasRemoveAction: {
+    type: Boolean,
+    default: false,
+  },
 })
+const emit = defineEmits(['edit-row', 'remove-row'])
 </script>
 
 <template>
@@ -20,6 +31,8 @@ defineProps({
           <th v-for="(column, index) in columns" :key="index">
             {{ column }}
           </th>
+          <th v-if="hasEdition"></th>
+          <th v-if="hasRemoveAction"></th>
         </tr>
       </thead>
       <tbody v-if="items.length">
@@ -28,6 +41,18 @@ defineProps({
           <td v-if="columns.includes('Nombre')">{{ item.name }}</td>
           <td>{{ item.description }}</td>
           <td>{{ item.createdAt }}</td>
+          <td v-if="hasEdition">
+            <PencilIcon
+              class="h-3 w-3 cursor-pointer"
+              @click="emit('edit-row', item)"
+            />
+          </td>
+          <td v-if="hasRemoveAction">
+            <TrashIcon
+              class="h-3 w-3 cursor-pointer"
+              @click="emit('remove-row', item.id)"
+            />
+          </td>
         </tr>
       </tbody>
       <tbody v-else>

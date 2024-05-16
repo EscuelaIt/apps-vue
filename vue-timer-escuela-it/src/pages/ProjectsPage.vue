@@ -1,34 +1,91 @@
 <script setup>
-import { onMounted, ref, computed } from 'vue'
+import { onMounted, ref } from 'vue'
 import BaseLayout from '@/components/BaseLayout.vue'
 import BaseTable from '@/components/BaseTable.vue'
-import BaseSelect from '@/components/BaseSelect.vue'
-import { listProjects } from '@/infra/api/project'
+import ProjectFormModal from '@/components/projects/ProjectFormModal.vue'
+import SuccessModal from '@/components/SuccessModal.vue'
+import { listProjects, removeProject } from '@/infra/api/project'
 
 const projects = ref([])
+const showProjectModal = ref(false)
+const currentProject = ref({})
+const currentProjectId = ref()
+const showConfirmModel = ref(false)
 
 onMounted(() => {
   loadData()
 })
 
-const projectsOptions = computed(() => {
-  return projects.value.map((project) => ({
-    value: project.id,
-    text: project.name,
-  }))
-})
-
 const loadData = async () => {
   projects.value = await listProjects()
+}
+
+const updateProjects = (project) => {
+  if (!currentProject.value.id) {
+    projects.value.push(project)
+  } else {
+    const index = projects.value.findIndex(
+      (p) => p.id === currentProject.value.id,
+    )
+    projects.value.splice(index, 1, project)
+  }
+
+  showProjectModal.value = false
+}
+
+const onEditProject = (project) => {
+  currentProject.value = project
+  showProjectModal.value = true
+}
+const onClose = () => {
+  currentProject.value = {}
+  showProjectModal.value = false
+}
+const onRemoveProject = (id) => {
+  currentProjectId.value = id
+  showConfirmModel.value = true
+}
+const onConfirmRemoveProject = async () => {
+  try {
+    await removeProject(currentProjectId.value)
+    const index = projects.value.findIndex(
+      (p) => p.id === currentProjectId.value,
+    )
+    projects.value.splice(index, 1)
+  } catch (error) {
+    console.error(error)
+  } finally {
+    showConfirmModel.value = false
+    currentProjectId.value = null
+  }
 }
 </script>
 
 <template>
   <BaseLayout title="Proyectos">
-    <BaseSelect title="Selecciona proyecto" :options="projectsOptions" />
+    <button class="btn btn-info btn-sm" @click="showProjectModal = true">
+      Nuevo proyecto
+    </button>
     <BaseTable
       :columns="['Nombre', 'Descripción', 'Creado']"
       :items="projects"
+      has-edition
+      has-remove-action
+      @edit-row="onEditProject"
+      @remove-row="onRemoveProject"
+    />
+
+    <ProjectFormModal
+      v-if="showProjectModal"
+      :current-project="currentProject"
+      @close="onClose"
+      @update-list="updateProjects"
+    />
+
+    <SuccessModal
+      v-if="showConfirmModel"
+      @close="showConfirmModel = false"
+      @confirm="onConfirmRemoveProject"
     />
   </BaseLayout>
 </template>
