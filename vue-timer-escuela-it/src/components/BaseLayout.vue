@@ -46,7 +46,7 @@ const logout = async () => {
       <header class="h-11 mb-3 items-center flex justify-end p-4">
         <PlusIcon class="h-6 w-6" @click="showIntervalsModal = true" />
       </header>
-      <section class="px-4">
+      <section class="px-4 pb-4">
         <h1 class="text-2xl font-semibold mb-4">{{ title }}</h1>
         <slot />
       </section>

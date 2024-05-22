@@ -12,3 +12,8 @@ export const createInterval = async (payload) => {
   const { data } = await http().post('/intervals', interval)
   return new IntervalModel(data.data)
 }
+
+export const finalizeInterval = async () => {
+  const { data } = await http().get('/intervals/finalize')
+  return new IntervalModel(data.data)
+}
