@@ -1,19 +1,32 @@
 <script setup>
 import BaseLayout from '@/components/BaseLayout.vue'
-import BaseModal from '@/components/BaseModal.vue'
-import useUser from '@/composables/useUser'
-import { ref } from 'vue'
+import IntervalCard from '@/components/intervals/IntervalCard.vue'
+import { listIntervals } from '@/infra/api/interval'
+import { onBeforeMount, ref } from 'vue'
 
-const showBaseModal = ref(false)
-const { user } = useUser()
+const allIntervals = ref([])
+
+onBeforeMount(() => {
+  loadData()
+})
+
+const loadData = async () => {
+  try {
+    allIntervals.value = await listIntervals()
+  } catch (error) {
+    console.error(error)
+  }
+}
 </script>
 
 <template>
-  <BaseLayout title="Dashboard">
-    <button class="btn" @click="showBaseModal = true">Show modal</button>
-    <h2>{{ user }}</h2>
-    <BaseModal v-if="showBaseModal" @close="showBaseModal = false">
-      <p>Contenido!!!</p>
-    </BaseModal>
+  <BaseLayout title="Dashboard" @update-info="loadData()">
+    <section class="grid grid-cols-4 gap-3">
+      <IntervalCard
+        v-for="interval in allIntervals"
+        :key="interval.id"
+        v-bind="interval"
+      />
+    </section>
   </BaseLayout>
 </template>

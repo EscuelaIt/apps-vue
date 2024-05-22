@@ -9,6 +9,7 @@ import { getColorScheme, setScheme } from '@/utils/colorThemes'
 import { doLogout } from '@/infra/api/auth'
 import { ref } from 'vue'
 import { useRouter, RouterLink } from 'vue-router'
+import IntervalsFormModal from '@/components/intervals/IntervalsFormModal.vue'
 
 defineProps({
   title: {
@@ -16,9 +17,11 @@ defineProps({
     required: true,
   },
 })
+const emit = defineEmits(['update-info'])
 
 const router = useRouter()
 
+const showIntervalsModal = ref(false)
 const theme = ref(getColorScheme())
 
 const changeTheme = (newTheme) => {
@@ -41,7 +44,7 @@ const logout = async () => {
     <input id="my-drawer-2" type="checkbox" class="drawer-toggle" />
     <div class="drawer-content">
       <header class="h-11 mb-3 items-center flex justify-end p-4">
-        <PlusIcon class="h-6 w-6" />
+        <PlusIcon class="h-6 w-6" @click="showIntervalsModal = true" />
       </header>
       <section class="px-4">
         <h1 class="text-2xl font-semibold mb-4">{{ title }}</h1>
@@ -86,4 +89,10 @@ const logout = async () => {
       </div>
     </div>
   </div>
+
+  <IntervalsFormModal
+    v-if="showIntervalsModal"
+    @close="showIntervalsModal = false"
+    @update-info="emit('update-info')"
+  />
 </template>
