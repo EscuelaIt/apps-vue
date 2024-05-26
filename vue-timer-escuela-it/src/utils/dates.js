@@ -10,10 +10,10 @@ const formatTwoDigits = (number) => {
   return number < 10 ? `0${number}` : number
 }
 
-export const isToday = (dateToCompare) => {
+export const isToday = (dateToCompare, vsDate = new Date()) => {
   return (
-    new Date(dateToCompare).getDate() === new Date().getDate() &&
-    new Date(dateToCompare).getMonth() === new Date().getMonth() &&
-    new Date(dateToCompare).getFullYear() === new Date().getFullYear()
+    new Date(dateToCompare).getDate() === vsDate.getDate() &&
+    new Date(dateToCompare).getMonth() === vsDate.getMonth() &&
+    new Date(dateToCompare).getFullYear() === vsDate.getFullYear()
   )
 }

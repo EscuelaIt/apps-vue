@@ -1,7 +1,8 @@
 <script setup>
 import { PencilIcon, TrashIcon } from '@heroicons/vue/24/solid'
+import { format } from 'date-fns'
 
-defineProps({
+const props = defineProps({
   columns: {
     type: Array,
     required: true,
@@ -20,6 +21,10 @@ defineProps({
   },
 })
 const emit = defineEmits(['edit-row', 'remove-row'])
+
+const includesField = (field) => {
+  return props.columns.some((column) => column.field === field)
+}
 </script>
 
 <template>
@@ -29,7 +34,7 @@ const emit = defineEmits(['edit-row', 'remove-row'])
         <tr>
           <th></th>
           <th v-for="(column, index) in columns" :key="index">
-            {{ column }}
+            {{ column.label }}
           </th>
           <th v-if="hasEdition"></th>
           <th v-if="hasRemoveAction"></th>
@@ -38,9 +43,17 @@ const emit = defineEmits(['edit-row', 'remove-row'])
       <tbody v-if="items.length">
         <tr v-for="item in items" :key="item.id" class="hover">
           <th>{{ item.id }}</th>
-          <td v-if="columns.includes('Nombre')">{{ item.name }}</td>
-          <td>{{ item.description }}</td>
-          <td>{{ item.createdAt }}</td>
+          <td v-if="includesField('name')">{{ item.name }}</td>
+          <td v-if="includesField('description')">{{ item.description }}</td>
+          <td v-if="includesField('createdAt')">{{ item.createdAt }}</td>
+          <td v-if="includesField('from')">
+            {{ format(new Date(item.from), 'dd/MM/yyyy HH:mm:ss') }}
+          </td>
+          <td v-if="includesField('to')">
+            {{
+              item.to ? format(new Date(item.to), 'dd/MM/yyyy HH:mm:ss') : '-'
+            }}
+          </td>
           <td v-if="hasEdition">
             <PencilIcon
               class="h-3 w-3 cursor-pointer"

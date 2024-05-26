@@ -1,34 +1,30 @@
 <script setup>
 import BaseLayout from '@/components/BaseLayout.vue'
+import BaseTabs from '@/components/BaseTabs.vue'
 import IntervalCard from '@/components/intervals/IntervalCard.vue'
-import IntervalDetailModal from '@/components/intervals/IntervalDetailModal.vue'
+import IntervalsCalendarTab from '@/components/intervals/IntervalsCalendarTab.vue'
+import IntervalsListTab from '@/components/intervals/IntervalsListTab.vue'
+
 import { finalizeInterval, listIntervals } from '@/infra/api/interval'
 import { isToday } from '@/utils/dates'
-import FullCalendar from '@fullcalendar/vue3'
-import dayGridPlugin from '@fullcalendar/daygrid'
-import timeGridPlugin from '@fullcalendar/timegrid'
-import { computed, onBeforeMount, ref } from 'vue'
+
+import { onBeforeMount, ref, computed } from 'vue'
 
 const allIntervals = ref([])
 const openedIntervals = ref([])
 const restIntervals = ref([])
 const todayIntervals = ref([])
-const intervalToShow = ref({})
-const showIntervalDetailModal = ref(false)
+
+const selectedTab = ref(0)
 
 onBeforeMount(() => {
   loadData()
 })
 
-const intervalCalendar = computed(() => {
-  return allIntervals.value.map((interval) => {
-    return {
-      id: interval.id,
-      title: interval.project.name,
-      start: interval.startTime,
-      end: interval.endTime,
-    }
-  })
+const tabsComponents = computed(() => {
+  const options = [IntervalsCalendarTab, IntervalsListTab]
+
+  return options[selectedTab.value]
 })
 
 const loadData = async () => {
@@ -75,19 +71,6 @@ const closeInterval = async () => {
     console.error(error)
   }
 }
-
-const handleEventClick = (eventClick) => {
-  console.log(eventClick)
-  intervalToShow.value = allIntervals.value.find((interval) => {
-    return interval.id === +eventClick.event.id
-  })
-  showIntervalDetailModal.value = true
-}
-
-const closeIntervalDetailModal = () => {
-  showIntervalDetailModal.value = false
-  intervalToShow.value = {}
-}
 </script>
 
 <template>
@@ -120,7 +103,16 @@ const closeIntervalDetailModal = () => {
       />
     </section>
 
-    <FullCalendar
+    <BaseTabs
+      :tabs="['Calendario', 'Listado']"
+      @change="(tab) => (selectedTab = tab)"
+    />
+
+    <section class="mt-5">
+      <component :is="tabsComponents" :all-intervals="allIntervals" />
+    </section>
+
+    <!-- <FullCalendar
       :options="{
         plugins: [dayGridPlugin, timeGridPlugin],
         initialView: 'dayGrid',
@@ -138,6 +130,6 @@ const closeIntervalDetailModal = () => {
       v-if="showIntervalDetailModal"
       v-bind="intervalToShow"
       @close="closeIntervalDetailModal"
-    />
+    /> -->
   </BaseLayout>
 </template>

@@ -12,6 +12,12 @@ const currentProject = ref({})
 const currentProjectId = ref()
 const showConfirmModel = ref(false)
 
+const columns = [
+  { label: 'Nombre', field: 'name' },
+  { label: 'Descripción', field: 'description' },
+  { label: 'Creado', field: 'createdAt' },
+]
+
 onMounted(() => {
   loadData()
 })
@@ -67,7 +73,7 @@ const onConfirmRemoveProject = async () => {
       Nuevo proyecto
     </button>
     <BaseTable
-      :columns="['Nombre', 'Descripción', 'Creado']"
+      :columns="columns"
       :items="projects"
       has-edition
       has-remove-action

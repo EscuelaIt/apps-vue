@@ -67,6 +67,9 @@ const logout = async () => {
           <li>
             <RouterLink to="/projects">Projects</RouterLink>
           </li>
+          <li>
+            <RouterLink to="/reports">Reportes</RouterLink>
+          </li>
         </ul>
       </div>
 
