@@ -1,12 +1,12 @@
 <script setup>
-import { ref, watch } from 'vue'
-import { useRouter } from 'vue-router'
 import { useForm } from 'vee-validate'
 import * as yup from 'yup'
-import useUser from '@/composables/useUser'
-import useToast from '@/composables/useToast'
 import { doLogin, doRegister } from '@/infra/api/auth'
-import BaseInput from '@/components/BaseInput.vue'
+
+definePageMeta({
+  middleware: ['auth'],
+  layout: 'auth',
+})
 
 const registerMode = ref(false)
 const isLoading = ref(false)
@@ -14,7 +14,6 @@ const formData = ref({})
 
 const { showToast } = useToast()
 const { setUser } = useUser()
-const router = useRouter()
 const { handleSubmit, setFieldError, resetForm } = useForm({
   validationSchema: yup.object({
     name: registerMode.value ? yup.string().required() : yup.string(),
@@ -45,14 +44,14 @@ const handleAuth = async (values) => {
       ? await doRegister({ ...values })
       : await doLogin({ ...values })
     setUser(user)
-    router.push('/')
+    navigateTo('/')
   } catch (error) {
     console.error(error)
 
-    showToast({ message: error.response.data.message, error: true })
+    showToast({ message: error.message || error.data.message, error: true })
 
-    for (const key in error.response.data.errors) {
-      setFieldError(key, error.response.data.errors[key][0])
+    for (const key in error.data.errors) {
+      setFieldError(key, error.data.errors[key][0])
     }
   } finally {
     isLoading.value = false

@@ -1,13 +1,14 @@
 <script setup>
-import { ref, computed } from 'vue'
-import BaseLayout from '@/components/BaseLayout.vue'
-import BaseTabs from '@/components/BaseTabs.vue'
 import IntervalCard from '@/components/intervals/IntervalCard.vue'
 import IntervalsCalendarTab from '@/components/intervals/IntervalsCalendarTab.vue'
 import IntervalsListTab from '@/components/intervals/IntervalsListTab.vue'
 
 import { finalizeInterval, listIntervals } from '@/infra/api/interval'
 import { isToday } from '@/utils/dates'
+
+definePageMeta({
+  middleware: ['only-authenticated'],
+})
 
 const allIntervals = ref([])
 const openedIntervals = ref([])
@@ -71,45 +72,45 @@ loadData()
 </script>
 
 <template>
-  <BaseLayout title="Dashboard" @update-info="loadData()">
-    <h3>Intervalos abiertos</h3>
-    <section class="grid grid-cols-4 gap-3">
-      <IntervalCard
-        v-for="interval in openedIntervals"
-        :key="interval.id"
-        v-bind="interval"
-        @stop="closeInterval()"
-      />
-    </section>
-    <h3>Intervalos de hoy</h3>
-    <section class="grid grid-cols-4 gap-3">
-      <IntervalCard
-        v-for="interval in todayIntervals"
-        :key="interval.id"
-        v-bind="interval"
-        @stop="closeInterval()"
-      />
-    </section>
-    <h3>Resto de intervalos</h3>
-    <section class="grid grid-cols-4 gap-3">
-      <IntervalCard
-        v-for="interval in restIntervals"
-        :key="interval.id"
-        v-bind="interval"
-        @stop="closeInterval()"
-      />
-    </section>
-
-    <BaseTabs
-      :tabs="['Calendario', 'Listado']"
-      @change="(tab) => (selectedTab = tab)"
+  <!-- <BaseLayout title="Dashboard" @update-info="loadData()"> -->
+  <h3>Intervalos abiertos</h3>
+  <section class="grid grid-cols-4 gap-3">
+    <IntervalCard
+      v-for="interval in openedIntervals"
+      :key="interval.id"
+      v-bind="interval"
+      @stop="closeInterval()"
     />
+  </section>
+  <h3>Intervalos de hoy</h3>
+  <section class="grid grid-cols-4 gap-3">
+    <IntervalCard
+      v-for="interval in todayIntervals"
+      :key="interval.id"
+      v-bind="interval"
+      @stop="closeInterval()"
+    />
+  </section>
+  <h3>Resto de intervalos</h3>
+  <section class="grid grid-cols-4 gap-3">
+    <IntervalCard
+      v-for="interval in restIntervals"
+      :key="interval.id"
+      v-bind="interval"
+      @stop="closeInterval()"
+    />
+  </section>
 
-    <section class="mt-5">
-      <component :is="tabsComponents" :all-intervals="allIntervals" />
-    </section>
+  <BaseTabs
+    :tabs="['Calendario', 'Listado']"
+    @change="(tab) => (selectedTab = tab)"
+  />
 
-    <!-- <FullCalendar
+  <section class="mt-5">
+    <component :is="tabsComponents" :all-intervals="allIntervals" />
+  </section>
+
+  <!-- <FullCalendar
       :options="{
         plugins: [dayGridPlugin, timeGridPlugin],
         initialView: 'dayGrid',
@@ -128,5 +129,5 @@ loadData()
       v-bind="intervalToShow"
       @close="closeIntervalDetailModal"
     /> -->
-  </BaseLayout>
+  <!-- </BaseLayout> -->
 </template>

@@ -1,10 +1,12 @@
 <script setup>
-import { ref } from 'vue'
-import BaseLayout from '@/components/BaseLayout.vue'
 import BaseTable from '@/components/BaseTable.vue'
 import ProjectFormModal from '@/components/projects/ProjectFormModal.vue'
 import SuccessModal from '@/components/SuccessModal.vue'
 import { listProjects, removeProject } from '@/infra/api/project'
+
+definePageMeta({
+  middleware: ['only-authenticated'],
+})
 
 const projects = ref([])
 const showProjectModal = ref(false)
@@ -66,30 +68,30 @@ loadData()
 </script>
 
 <template>
-  <BaseLayout title="Proyectos">
-    <button class="btn btn-info btn-sm" @click="showProjectModal = true">
-      Nuevo proyecto
-    </button>
-    <BaseTable
-      :columns="columns"
-      :items="projects"
-      has-edition
-      has-remove-action
-      @edit-row="onEditProject"
-      @remove-row="onRemoveProject"
-    />
+  <!-- <BaseLayout title="Proyectos"> -->
+  <button class="btn btn-info btn-sm" @click="showProjectModal = true">
+    Nuevo proyecto
+  </button>
+  <BaseTable
+    :columns="columns"
+    :items="projects"
+    has-edition
+    has-remove-action
+    @edit-row="onEditProject"
+    @remove-row="onRemoveProject"
+  />
 
-    <ProjectFormModal
-      v-if="showProjectModal"
-      :current-project="currentProject"
-      @close="onClose"
-      @update-list="updateProjects"
-    />
+  <ProjectFormModal
+    v-if="showProjectModal"
+    :current-project="currentProject"
+    @close="onClose"
+    @update-list="updateProjects"
+  />
 
-    <SuccessModal
-      v-if="showConfirmModel"
-      @close="showConfirmModel = false"
-      @confirm="onConfirmRemoveProject"
-    />
-  </BaseLayout>
+  <SuccessModal
+    v-if="showConfirmModel"
+    @close="showConfirmModel = false"
+    @confirm="onConfirmRemoveProject"
+  />
+  <!-- </BaseLayout> -->
 </template>

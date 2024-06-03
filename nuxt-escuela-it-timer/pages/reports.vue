@@ -1,9 +1,11 @@
 <script setup>
-import { ref, computed } from 'vue'
-import BaseLayout from '@/components/BaseLayout.vue'
 import { listIntervals } from '@/infra/api/interval'
 import { extractTime, isToday } from '@/utils/dates'
 import BarChart from '@/components/BarChart.vue'
+
+definePageMeta({
+  middleware: ['only-authenticated'],
+})
 
 const allIntervals = ref([])
 const totalsTimes = ref([])
@@ -73,15 +75,15 @@ loadData()
 </script>
 
 <template>
-  <BaseLayout title="Reportes">
-    <p>
-      Tiempo total: <span class="font-bold">{{ totalTime }}</span>
-    </p>
+  <!-- <BaseLayout title="Reportes"> -->
+  <p>
+    Tiempo total: <span class="font-bold">{{ totalTime }}</span>
+  </p>
 
-    <BarChart
-      v-if="totalsTimes.length"
-      :labels="daysOfWeek"
-      :data="totalsTimes"
-    />
-  </BaseLayout>
+  <BarChart
+    v-if="totalsTimes.length"
+    :labels="daysOfWeek"
+    :data="totalsTimes"
+  />
+  <!-- </BaseLayout> -->
 </template>

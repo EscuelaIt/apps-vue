@@ -35,6 +35,7 @@ const logout = async () => {
       </header>
       <section class="px-4 pb-4">
         <h1 class="text-2xl font-semibold mb-4">{{ title }}</h1>
+
         <slot />
       </section>
     </div>

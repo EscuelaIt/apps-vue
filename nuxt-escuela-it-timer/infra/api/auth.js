@@ -4,7 +4,7 @@ import { getMe } from './user'
 import useUser from '@/composables/useUser'
 
 export const doRegister = async ({ name, email, password }) => {
-  const { data } = await useHttp('/auth/register', {
+  const data = await useHttp('/auth/register', {
     method: 'POST',
     body: {
       name,
@@ -17,7 +17,7 @@ export const doRegister = async ({ name, email, password }) => {
 }
 
 export const doLogin = async ({ email, password }) => {
-  const { data } = await useHttp('/auth/login', {
+  const data = await useHttp('/auth/login', {
     method: 'POST',
     body: {
       email,

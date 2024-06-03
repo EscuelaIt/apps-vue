@@ -3,7 +3,7 @@ export const setToken = (token) => {
 }
 
 export const getToken = () => {
-  return localStorage.getItem('timer-eit-token')
+  return process.client ? localStorage.getItem('timer-eit-token') : undefined
 }
 
 export const isAuthenticated = () => {
